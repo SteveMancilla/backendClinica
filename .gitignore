@@ -1,0 +1,50 @@
+# Dependencies
+/vendor/
+/node_modules/
+
+# Environment (never commit secrets)
+.env
+.env.*
+!.env.example
+
+# Laravel
+/public/build/
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+/bootstrap/cache/*
+!bootstrap/cache/.gitignore
+
+# Logs & cache
+*.log
+.phpunit.result.cache
+.phpunit.cache
+/.phpunit.cache
+
+# IDE & tooling
+/.codex/
+/.cursor/
+/.idea/
+/.nova/
+/.phpactor.json
+/.vscode/
+/.zed/
+_ide_helper.php
+_ide_helper_models.php
+.phpstorm.meta.php
+
+# Composer
+/auth.json
+
+# Homestead / Vagrant
+Homestead.json
+Homestead.yaml
+
+# Database (local SQLite, if used)
+/database/*.sqlite
+/database/*.sqlite-journal
+
+# OS
+.DS_Store
+Thumbs.db
