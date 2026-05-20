@@ -1,32 +1,28 @@
-#!/bin/sh
+#!/usr/bin/env bash
 set -e
 
-cd /app
+echo "==> Preparando Laravel..."
 
-# Render inyecta DATABASE_URL; Laravel usa DB_URL
-if [ -n "$DATABASE_URL" ] && [ -z "$DB_URL" ]; then
-  export DB_URL="$DATABASE_URL"
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+php artisan cache:clear
+
+php artisan storage:link || true
+
+if [ "${RUN_MIGRATIONS}" = "true" ]; then
+    echo "==> Ejecutando migraciones..."
+    php artisan migrate --force
 fi
 
-if [ -z "$APP_KEY" ]; then
-  echo "ERROR: Define APP_KEY en Render (php artisan key:generate --show en local)."
-  exit 1
+if [ "${RUN_DB_SEED}" = "true" ]; then
+    echo "==> Ejecutando seeders..."
+    php artisan db:seed --force
 fi
 
-mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache
-chmod -R ug+rwx storage bootstrap/cache 2>/dev/null || true
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
 
-php artisan config:clear --no-ansi
-php artisan migrate --force --no-interaction --no-ansi
-
-if [ "${RUN_DB_SEED:-false}" = "true" ]; then
-  php artisan db:seed --force --no-interaction --no-ansi
-fi
-
-php artisan config:cache --no-ansi
-php artisan route:cache --no-ansi
-php artisan view:cache --no-ansi 2>/dev/null || true
-
-php artisan storage:link --force --no-interaction --no-ansi 2>/dev/null || true
-
+echo "==> Iniciando servidor..."
 exec "$@"
