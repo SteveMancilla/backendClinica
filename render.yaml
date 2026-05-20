@@ -1,0 +1,65 @@
+# Blueprint Render — API Laravel (Docker)
+# Docs: https://render.com/docs/blueprint-spec
+#
+# Despliegue: conecta el repo de GitHub en Render → New → Blueprint → render.yaml
+# O crea un Web Service manual con Runtime: Docker y Dockerfile en la raíz del repo backend.
+
+services:
+  - type: web
+    name: clinica-zarate-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    region: oregon
+    healthCheckPath: /up
+    autoDeploy: true
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: LOG_LEVEL
+        value: info
+      - key: APP_NAME
+        value: Clínica Zárate API
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_SSLMODE
+        value: require
+      - key: DB_URL
+        fromDatabase:
+          name: clinica-zarate-db
+          property: connectionString
+      - key: SESSION_DRIVER
+        value: database
+      - key: CACHE_STORE
+        value: database
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: FILESYSTEM_DISK
+        value: local
+      - key: OLLAMA_ENABLED
+        value: "false"
+      - key: RUN_DB_SEED
+        value: "false"
+      # Generar en local: php artisan key:generate --show
+      - key: APP_KEY
+        sync: false
+      # URL pública del servicio (ajustar tras el primer deploy si hace falta)
+      - key: APP_URL
+        sync: false
+      # URL del frontend en producción (CORS)
+      - key: FRONTEND_URL
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+
+databases:
+  - name: clinica-zarate-db
+    plan: free
+    databaseName: clinica_zarate
+    user: clinica_zarate
+    ipAllowList: []
